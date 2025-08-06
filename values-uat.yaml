@@ -1,0 +1,145 @@
+alertmanager:
+  replicaCount: 1
+  revisionHistoryLimit: 10
+  image:
+    repository: quay.io/prometheus/alertmanager
+    pullPolicy: IfNotPresent
+    tag: ""
+  baseURL: ""
+  extraArgs: {}
+  extraSecretMounts: []
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+  namespaceOverride: ""
+  automountServiceAccountToken: true
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: ""
+  priorityClassName: ""
+  schedulerName: ""
+  podSecurityContext:
+    fsGroup: 65534
+  dnsConfig: {}
+  hostAliases: []
+  securityContext:
+    runAsUser: 65534
+    runAsNonRoot: true
+    runAsGroup: 65534
+  additionalPeers: []
+  extraInitContainers: []
+  extraContainers: []
+  containerPortName: &containerPortName http
+  livenessProbe:
+    httpGet:
+      path: /
+      port: *containerPortName
+  readinessProbe:
+    httpGet:
+      path: /
+      port: *containerPortName
+  service:
+    annotations: {}
+    labels: {}
+    type: ClusterIP
+    port: 9093
+    clusterPort: 9094
+    loadBalancerIP: ""  
+    loadBalancerSourceRanges: []  
+    extraPorts: []
+    ipDualStack:
+      enabled: false
+      ipFamilies: ["IPv6", "IPv4"]
+      ipFamilyPolicy: "PreferDualStack"
+  servicePerReplica:
+    enabled: false
+    annotations: {}
+    loadBalancerSourceRanges: []
+    externalTrafficPolicy: Cluster
+    type: ClusterIP
+  ingress:
+    enabled: false
+    className: ""
+    labels: {}
+    annotations: {}
+    hosts:
+      - host: alertmanager.domain.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+  ingressPerReplica:
+    enabled: false
+    className: ""
+    annotations: {}
+    labels: {}
+    hostPrefix: "alertmanager"
+    hostDomain: "domain.com"
+    paths:
+      - /
+    pathType: ImplementationSpecific
+    tlsSecretName: ""
+    tlsSecretPerReplica:
+      enabled: false
+      prefix: "alertmanager"
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAntiAffinity: ""
+  podAntiAffinityTopologyKey: kubernetes.io/hostname
+  topologySpreadConstraints: []
+  statefulSet:
+    annotations: {}
+  minReadySeconds: 0
+  podAnnotations: {}
+  podLabels: {}
+  podDisruptionBudget: {}
+  command: []
+  persistence:
+    type: pvc
+    enabled: true
+    storageClassName: azureblob-fuse-custom
+    volumeName: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+  configAnnotations: {}
+  config:
+    enabled: true
+    global:
+      resolve_timeout: 5m
+    templates:
+      - '/etc/alertmanager/*.tmpl'
+    route:
+      receiver: "teams"
+      group_by: ['job', 'alertname']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 3h
+  configmapReload:
+    enabled: false
+    name: configmap-reload
+    image:
+      repository: quay.io/prometheus-operator/prometheus-config-reloader
+      tag: v0.84.1
+      pullPolicy: IfNotPresent
+    resources: {}
+    livenessProbe: {}
+    readinessProbe: {}
+    extraArgs: {}
+    extraVolumeMounts: []
+    extraEnv: []
+    securityContext: {}
+  templates: {}
+  extraVolumeMounts: []
+  extraVolumes: []
+  extraEnv: []
+  testFramework:
+    enabled: false
+    annotations:
+      "helm.sh/hook": test-success
+  verticalPodAutoscaler:
+    enabled: false
+  extraPodConfigs: {}

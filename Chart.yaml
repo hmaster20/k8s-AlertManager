@@ -1,0 +1,10 @@
+apiVersion: v2
+name: ucf-alertmanager
+type: application
+appVersion: v0.28.1
+description: Alertmanager
+version: 1.0.4
+dependencies:
+- name: alertmanager
+  repository: file://charts/alertmanager
+  version: 1.21.0
